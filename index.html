@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopHub • Everything Store (Single‑File)</title>
+  <meta name="description" content="A complete single‑file e‑commerce template: homepage, product grid, product detail modal, cart drawer, search, filters & localStorage cart." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect rx='20' width='100' height='100' fill='%230ea5e9'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='Arial' font-size='54' fill='white'%3ESH%3C/text%3E%3C/svg%3E">
+  <style>
+    :root{
+      --bg:#0f1111;--bg-2:#131921;--text:#f3f4f6;--muted:#9ca3af;--brand:#10b981;--accent:#0ea5e9;--surface:#ffffff;--surface-2:#f3f4f6;--danger:#ef4444;--warn:#f59e0b;--shadow:0 10px 20px rgba(0,0,0,.08),0 6px 6px rgba(0,0,0,.06);--radius:16px;--radius-sm:12px
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    button{cursor:pointer}
+
+    /* HEADER */
+    .topbar{background:var(--bg);color:var(--text);position:sticky;top:0;z-index:60}
+    .topbar .row{display:flex;align-items:center;gap:12px;padding:10px 16px;max-width:1200px;margin:0 auto}
+    .logo{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.3px}
+    .logo-badge{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--accent));display:grid;place-items:center;color:#fff;font-weight:800}
+    .search{flex:1;display:flex;align-items:center}
+    .search input{flex:1;padding:12px 14px;border:2px solid transparent;border-radius:999px 0 0 999px;outline:none;background:#fff}
+    .search button{padding:12px 16px;border:none;background:var(--brand);color:#fff;font-weight:700;border-radius:0 999px 999px 0}
+    .actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+    .icon-btn{position:relative;width:40px;height:40px;border-radius:999px;background:#1f2937;display:grid;place-items:center}
+    .badge{position:absolute;top:-6px;right:-6px;background:var(--danger);color:#fff;border-radius:999px;font-size:11px;padding:2px 6px}
+
+    .subnav{background:var(--bg-2);color:#e5e7eb}
+    .subnav .row{max-width:1200px;margin:0 auto;display:flex;gap:10px;padding:8px 16px;overflow:auto}
+    .pill{padding:8px 12px;border-radius:999px;background:#1f2937;white-space:nowrap}
+
+    /* HERO */
+    .hero{position:relative;background:linear-gradient(135deg,#e0f2fe,#ecfeff);padding:28px 16px}
+    .hero .wrap{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:center}
+    .hero h1{margin:0;font-size:44px;line-height:1.05}
+    .hero p{color:#374151;font-size:18px}
+    .hero .cta{display:flex;gap:12px;margin-top:14px}
+    .btn{padding:12px 16px;border-radius:12px;border:none;font-weight:700}
+    .btn.primary{background:var(--brand);color:#fff}
+    .btn.secondary{background:#111827;color:#fff}
+    .hero-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+
+    /* LAYOUT */
+    .section{max-width:1200px;margin:20px auto;padding:0 16px}
+    .section h2{margin:0 0 10px}
+    .grid{display:grid;gap:14px}
+    .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .grid.cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+    @media (max-width:1100px){.grid.cols-4{grid-template-columns:repeat(3,1fr)}.grid.cols-5{grid-template-columns:repeat(3,1fr)}.hero .wrap{grid-template-columns:1fr}.hero h1{font-size:34px}}
+    @media (max-width:700px){.grid.cols-4,.grid.cols-5{grid-template-columns:repeat(2,1fr)}}
+
+    .tile{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:grid;gap:10px}
+    .tile .thumb{aspect-ratio:16/9;border-radius:12px;background:#e5e7eb;display:grid;place-items:center;font-weight:700;color:#111827}
+
+    /* PRODUCT */
+    .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column}
+    .imgwrap{aspect-ratio:1/1;overflow:hidden;border-top-left-radius:var(--radius);border-top-right-radius:var(--radius);background:#f9fafb}
+    .body{padding:10px;display:grid;gap:6px}
+    .title{font-weight:600}
+    .price{font-weight:800;font-size:18px}
+    .old{color:var(--muted);text-decoration:line-through;margin-left:6px;font-weight:500}
+    .rating{font-size:12px;color:var(--warn)}
+    .ship{font-size:12px;color:#10b981}
+    .cta-row{padding:10px;display:flex;gap:8px}
+    .qty{display:flex;align-items:center;gap:8px}
+    .qty input{width:42px;text-align:center;border:1px solid #e5e7eb;border-radius:8px;padding:8px}
+
+    /* DRAWERS / MODALS */
+    .drawer{position:fixed;inset:0;background:rgba(17,24,39,.5);display:none;z-index:80}
+    .drawer.open{display:block}
+    .drawer .panel{position:absolute;right:0;top:0;height:100%;width:min(420px,92vw);background:#fff;box-shadow:var(--shadow);display:flex;flex-direction:column}
+    .drawer header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e5e7eb}
+    .drawer .content{padding:12px 16px;overflow:auto;flex:1}
+    .drawer footer{padding:12px 16px;border-top:1px solid #e5e7eb}
+
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(17,24,39,.55);z-index:90}
+    .modal.open{display:grid}
+    .modal .card{width:min(900px,94vw)}
+
+    /* FOOTER */
+    footer{margin-top:36px;background:#111827;color:#d1d5db}
+    .backtop{background:#1f2937;text-align:center;padding:10px 0}
+    .ft{max-width:1200px;margin:0 auto;padding:22px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .ft h4{margin:0 0 8px;color:#fff}
+    .ft a{display:block;padding:6px 0;color:#cbd5e1}
+    .ft .mini{grid-column:1/-1;border-top:1px solid #374151;margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;align-items:center}
+    .sr-only{position:absolute;left:-9999px}
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="row">
+      <a class="logo" href="#" aria-label="ShopHub Home">
+        <span class="logo-badge">SH</span>
+        <span>ShopHub</span>
+      </a>
+      <form class="search" id="searchForm" role="search" aria-label="Sitewide">
+        <label class="sr-only" for="q">Search</label>
+        <input id="q" name="q" placeholder="Search products, brands and more…" autocomplete="off" />
+        <button type="submit" aria-label="Search">🔎</button>
+      </form>
+      <nav class="actions" aria-label="Account and Cart">
+        <a class="icon-btn" id="openLogin" title="Sign in">👤</a>
+        <a class="icon-btn" id="openOrders" title="Orders">📦</a>
+        <a class="icon-btn" id="openCart" title="Cart">
+          🛒<span class="badge" id="cartCount">0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+  <div class="subnav">
+    <div class="row" role="navigation" aria-label="Categories">
+      <a class="pill" data-cat="all">All</a>
+      <a class="pill" data-cat="electronics">Electronics</a>
+      <a class="pill" data-cat="home">Home & Kitchen</a>
+      <a class="pill" data-cat="fashion">Fashion</a>
+      <a class="pill" data-cat="beauty">Beauty</a>
+      <a class="pill" data-cat="sports">Sports</a>
+      <a class="pill" data-cat="toys">Toys</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <h1>Everything you need, delivered fast</h1>
+        <p>Discover thousands of products across electronics, fashion, home & more. Great prices. Trusted sellers. Easy returns.</p>
+        <div class="cta">
+          <button class="btn primary" id="browseDeals">Shop Deals</button>
+          <button class="btn secondary" id="browseNew">New Arrivals</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <strong>Quick Reorder</strong>
+        <p class="muted">Sign in to see your past purchases and reorder in a tap.</p>
+        <button class="btn" id="openLogin2">Sign in</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY TILES -->
+  <section class="section">
+    <h2>Popular Categories</h2>
+    <div class="grid cols-4">
+      <a class="tile" data-cat="electronics">
+        <div class="thumb"><span>Electronics</span></div>
+        <span>Phones, laptops, audio & more</span>
+      </a>
+      <a class="tile" data-cat="home">
+        <div class="thumb"><span>Home</span></div>
+        <span>Kitchen, cleaning & decor</span>
+      </a>
+      <a class="tile" data-cat="fashion">
+        <div class="thumb"><span>Fashion</span></div>
+        <span>Men • Women • Kids</span>
+      </a>
+      <a class="tile" data-cat="beauty">
+        <div class="thumb"><span>Beauty</span></div>
+        <span>Makeup, skincare & tools</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- TOOLBAR -->
+  <section class="section" id="deals">
+    <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      <h2 style="margin:0">Today’s Top Deals</h2>
+      <div style="display:flex;gap:8px;align-items:center">
+        <label>Sort:
+          <select id="sortSel">
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating-desc">Rating</option>
+          </select>
+        </label>
+        <label>Price max: <input type="number" id="priceMax" min="0" style="width:100px"> </label>
+        <button class="btn" id="applyFilters">Apply</button>
+        <button class="btn" id="clearFilters">Clear</button>
+      </div>
+    </div>
+    <div class="grid cols-5" id="dealGrid" aria-live="polite"></div>
+  </section>
+
+  <!-- ALL PRODUCTS -->
+  <section class="section" id="all">
+    <h2>Best Sellers</h2>
+    <div class="grid cols-5" id="productGrid" aria-live="polite"></div>
+  </section>
+
+  <!-- PRODUCT DETAIL MODAL -->
+  <div class="modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="pdTitle">
+    <article class="card">
+      <header style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #e5e7eb">
+        <strong id="pdTitle">Product</strong>
+        <button class="btn" id="closeModal">Close ✕</button>
+      </header>
+      <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;padding:16px" id="pdBody">
+        <!-- filled via JS -->
+      </div>
+      <div class="cta-row" id="pdCtas"></div>
+    </article>
+  </div>
+
+  <!-- CART DRAWER -->
+  <div class="drawer" id="cartDrawer" aria-hidden="true">
+    <div class="panel">
+      <header>
+        <strong>Your Cart</strong>
+        <button class="btn" id="closeCart">Close ✕</button>
+      </header>
+      <div class="content" id="cartItems"></div>
+      <footer>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <strong>Total</strong>
+          <strong id="cartTotal">$0.00</strong>
+        </div>
+        <button class="btn primary" id="checkoutBtn" style="width:100%">Proceed to Checkout</button>
+      </footer>
+    </div>
+  </div>
+
+  <footer>
+    <div class="backtop" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top ↑</div>
+    <div class="ft">
+      <div>
+        <h4>Get to Know Us</h4>
+        <a href="#">About ShopHub</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+        <a href="#">Sustainability</a>
+      </div>
+      <div>
+        <h4>Make Money</h4>
+        <a href="#">Sell on ShopHub</a>
+        <a href="#">Affiliate Program</a>
+        <a href="#">Fulfillment</a>
+        <a href="#">Advertising</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="#">Your Account</a>
+        <a href="#">Returns Centre</a>
+        <a href="#">Shipping</a>
+        <a href="#">Support</a>
+      </div>
+      <div>
+        <h4>Download App</h4>
+        <a href="#">iOS</a>
+        <a href="#">Android</a>
+        <a href="#">PWA</a>
+      </div>
+      <div class="mini">
+        <div class="logo" aria-label="ShopHub">
+          <span class="logo-badge">SH</span>
+          <span>ShopHub</span>
+        </div>
+        <small>© <span id="year"></span> ShopHub. Demo only.</small>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Demo Data =====
+    const PRODUCTS = [
+      {id:1, title:"Wireless Headphones Pro", price:79.99, oldPrice:129.99, rating:4.6, reviews:1342, ship:"Free delivery", img:"https://picsum.photos/seed/headphones/600/600", cat:"electronics", deal:true, desc:"Noise‑cancelling over‑ear headphones with 30h battery and fast charge."},
+      {id:2, title:"Smartwatch Series X", price:149.00, oldPrice:199.00, rating:4.4, reviews:823, ship:"Prime eligible", img:"https://picsum.photos/seed/watch/600/600", cat:"electronics", deal:true, desc:"Health tracking, GPS, and notifications. 7‑day battery life."},
+      {id:3, title:"Air Fryer 5.5L", price:89.50, oldPrice:139.90, rating:4.7, reviews:5621, ship:"Free returns", img:"https://picsum.photos/seed/airfryer/600/600", cat:"home", deal:true, desc:"Crispy results with 90% less oil. 8 presets and dishwasher‑safe basket."},
+      {id:4, title:"Ergonomic Office Chair", price:199.99, oldPrice:269.99, rating:4.5, reviews:973, ship:"Prime eligible", img:"https://picsum.photos/seed/chair/600/600", cat:"home", deal:false, desc:"Adjustable lumbar, breathable mesh, and tilt lock for all‑day comfort."},
+      {id:5, title:"4K Ultra HD TV 55\"", price:429.00, oldPrice:579.00, rating:4.3, reviews:341, ship:"Free delivery", img:"https://picsum.photos/seed/tv/600/600", cat:"electronics", deal:true, desc:"Vivid HDR with smart apps built‑in. Dolby Vision and eARC support."},
+      {id:6, title:"Yoga Mat – Pro Grip", price:24.99, oldPrice:34.99, rating:4.8, reviews:2011, ship:"Prime eligible", img:"https://picsum.photos/seed/yoga/600/600", cat:"sports", deal:false, desc:"Sweat‑resistant mat with carry strap. 6mm cushioned support."},
+      {id:7, title:"Cotton Bed Sheet Set", price:39.99, oldPrice:59.99, rating:4.2, reviews:431, ship:"Free delivery", img:"https://picsum.photos/seed/sheets/600/600", cat:"home", deal:false, desc:"400‑thread‑count cotton. Includes fitted, flat, and 2 pillowcases."},
+      {id:8, title:"Kids Building Blocks 500pcs", price:29.99, oldPrice:49.99, rating:4.9, reviews:12998, ship:"Prime eligible", img:"https://picsum.photos/seed/blocks/600/600", cat:"toys", deal:false, desc:"STEM building set compatible with major brands. Ages 5+."},
+      {id:9, title:"Men's Running Shoes", price:54.95, oldPrice:79.95, rating:4.4, reviews:765, ship:"Free returns", img:"https://picsum.photos/seed/shoes/600/600", cat:"fashion", deal:false, desc:"Lightweight cushioning with breathable knit upper for daily runs."},
+      {id:10, title:"Stainless Steel Cookware Set", price:119.00, oldPrice:169.00, rating:4.6, reviews:2321, ship:"Prime eligible", img:"https://picsum.photos/seed/cook/600/600", cat:"home", deal:false, desc:"10‑piece tri‑ply set compatible with all stovetops, oven‑safe to 260°C."},
+      {id:11, title:"Gaming Keyboard RGB", price:45.00, oldPrice:69.00, rating:4.5, reviews:981, ship:"Free delivery", img:"https://picsum.photos/seed/keyboard/600/600", cat:"electronics", deal:false, desc:"Hot‑swappable keys with per‑key lighting and anti‑ghosting."},
+      {id:12, title:"Facial Cleanser Gentle", price:12.49, oldPrice:16.99, rating:4.1, reviews:411, ship:"Free delivery", img:"https://picsum.photos/seed/cleanser/600/600", cat:"beauty", deal:false, desc:"pH‑balanced formula suitable for all skin types, fragrance‑free."}
+    ];
+
+    // ===== State =====
+    const state = {
+      cart: load('cart') || {},
+      filterCat: 'all',
+      q: '',
+      sort: 'featured',
+      priceMax: null,
+    };
+
+    // ===== Utils =====
+    const qs = (s,el=document)=>el.querySelector(s);
+    const qsa = (s,el=document)=>[...el.querySelectorAll(s)];
+    const money = n => new Intl.NumberFormat(undefined,{style:'currency',currency:'USD'}).format(n);
+    const star = r => {
+      const full = Math.floor(r); const half = r - full >= .5 ? 1 : 0;
+      return '★★★★★'.slice(0,full) + (half ? '½' : '') + '☆☆☆☆☆'.slice(0,5-full-half);
+    }
+    function save(key,val){ localStorage.setItem('sh_'+key, JSON.stringify(val)); }
+    function load(key){ try{ return JSON.parse(localStorage.getItem('sh_'+key)||'null'); }catch(e){ return null; } }
+
+    // ===== Rendering =====
+    function card(p){
+      return `
+      <article class="card" aria-label="${p.title}">
+        <div class="imgwrap"><img src="${p.img}" alt="${p.title}" loading="lazy"></div>
+        <div class="body">
+          <div class="title">${p.title}</div>
+          <div><span class="price">${money(p.price)}</span> <span class="old">${money(p.oldPrice)}</span></div>
+          <div class="rating" aria-label="${p.rating} stars">${star(p.rating)} <span style="color:#6b7280">(${p.reviews.toLocaleString()})</span></div>
+          <div class="ship">${p.ship}</div>
+        </div>
+        <div class="cta-row">
+          <div class="qty">
+            <button class="btn" onclick="qtyStep(${p.id},-1)">−</button>
+            <input id="qty-${p.id}" value="1" aria-label="Quantity for ${p.title}">
+            <button class="btn" onclick="qtyStep(${p.id},1)">+</button>
+          </div>
+          <button class="btn primary" onclick="add(${p.id})">Add</button>
+          <button class="btn" onclick="showProduct(${p.id})">Details</button>
+        </div>
+      </article>`
+    }
+
+    function renderGrids(){
+      const data = filterSort(PRODUCTS);
+      const deals = data.filter(p=>p.deal);
+      qs('#dealGrid').innerHTML = deals.map(card).join('') || '<p>No deals match your filters.</p>';
+      qs('#productGrid').innerHTML = data.map(card).join('');
+    }
+
+    function filterSort(arr){
+      let a = arr;
+      if(state.filterCat !== 'all') a = a.filter(p=>p.cat===state.filterCat);
+      if(state.q) a = a.filter(p=>p.title.toLowerCase().includes(state.q));
+      if(state.priceMax) a = a.filter(p=>p.price <= state.priceMax);
+      switch(state.sort){
+        case 'price-asc': a = a.slice().sort((x,y)=>x.price-y.price); break;
+        case 'price-desc': a = a.slice().sort((x,y)=>y.price-x.price); break;
+        case 'rating-desc': a = a.slice().sort((x,y)=>y.rating - x.rating); break;
+        default: /* featured */ a = a.slice().sort((x,y)=> (y.deal?1:0)-(x.deal?1:0) || y.reviews-x.reviews );
+      }
+      return a;
+    }
+
+    // ===== Cart =====
+    function qtyStep(id,d){ const el = qs('#qty-'+id); el.value = Math.max(1, parseInt(el.value||1,10)+d); }
+    function add(id){ const q = Math.max(1, parseInt(qs('#qty-'+id).value||1,10)); state.cart[id]=(state.cart[id]||0)+q; save('cart',state.cart); toast('Added to cart'); updateCartIcon(); }
+    function remove(id){ delete state.cart[id]; save('cart',state.cart); renderCart(); updateCartIcon(); }
+    function changeQty(id,q){ state.cart[id]=Math.max(1, parseInt(q||1,10)); save('cart',state.cart); renderCart(); updateCartIcon(); }
+    function updateCartIcon(){ const n = Object.values(state.cart).reduce((s,v)=>s+v,0); qs('#cartCount').textContent=n; }
+
+    function renderCart(){
+      const wrap = qs('#cartItems');
+      const entries = Object.entries(state.cart);
+      if(entries.length===0){ wrap.innerHTML = '<p>Your cart is empty.</p>'; qs('#cartTotal').textContent=money(0); return; }
+      let total = 0;
+      wrap.innerHTML = entries.map(([id,q])=>{
+        const p = PRODUCTS.find(x=>x.id==id); const line = p.price*q; total+=line;
+        return `
+          <div style="display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;margin-bottom:12px">
+            <img src="${p.img}" alt="${p.title}" style="width:64px;height:64px;object-fit:cover;border-radius:10px">
+            <div>
+              <div style="font-weight:600">${p.title}</div>
+              <small>${money(p.price)} • ${p.ship}</small>
+              <div style="margin-top:6px">
+                Qty: <input type="number" min="1" value="${q}" style="width:60px" onchange="changeQty(${p.id},this.value)">
+                <button class="btn" onclick="remove(${p.id})" style="margin-left:8px">Remove</button>
+              </div>
+            </div>
+            <div style="font-weight:700">${money(line)}</div>
+          </div>`
+      }).join('');
+      qs('#cartTotal').textContent = money(total);
+    }
+
+    // ===== Product Modal =====
+    function showProduct(id){
+      const p = PRODUCTS.find(x=>x.id===id);
+      const body = `
+        <div><img src="${p.img}" alt="${p.title}" style="border-radius:14px"></div>
+        <div>
+          <h3 style="margin:0">${p.title}</h3>
+          <p style="color:#374151">${p.desc}</p>
+          <div style="margin:8px 0"><span class="price">${money(p.price)}</span> <span class="old">${money(p.oldPrice)}</span></div>
+          <div class="rating">${star(p.rating)} <span style="color:#6b7280">(${p.reviews.toLocaleString()} reviews)</span></div>
+          <div class="ship">${p.ship}</div>
+        </div>`;
+      qs('#pdBody').innerHTML = body;
+      qs('#pdCtas').innerHTML = `
+        <div class="qty">
+          <button class="btn" onclick="qtyStep(${p.id},-1)">−</button>
+          <input id="qty-${p.id}" value="1">
+          <button class="btn" onclick="qtyStep(${p.id},1)">+</button>
+        </div>
+        <button class="btn primary" onclick="add(${p.id})">Add to Cart</button>
+        <button class="btn" onclick="openCart()">View Cart</button>`;
+      openModal();
+      qs('#pdTitle').textContent = p.title;
+    }
+
+    function openModal(){ qs('#productModal').classList.add('open'); }
+    function closeModal(){ qs('#productModal').classList.remove('open'); }
+
+    // ===== Drawer & Toast =====
+    function openCart(){ renderCart(); qs('#cartDrawer').classList.add('open'); qs('#cartDrawer').setAttribute('aria-hidden','false'); }
+    function closeCart(){ qs('#cartDrawer').classList.remove('open'); qs('#cartDrawer').setAttribute('aria-hidden','true'); }
+    function toast(msg){
+      const t = document.createElement('div');
+      t.textContent = msg; t.style.position='fixed'; t.style.bottom='20px'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.background='#111827'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='12px'; t.style.boxShadow='var(--shadow)'; t.style.zIndex=200;
+      document.body.appendChild(t); setTimeout(()=>t.remove(),1200);
+    }
+
+    // ===== Events =====
+    qs('#searchForm').addEventListener('submit', e=>{ e.preventDefault(); state.q = qs('#q').value.toLowerCase().trim(); renderGrids(); });
+    qsa('[data-cat]').forEach(el=>el.addEventListener('click',()=>{ state.filterCat=el.dataset.cat; renderGrids(); window.scrollTo({top:document.getElementById('deals').offsetTop-20,behavior:'smooth'}) }))
+    qs('#applyFilters').addEventListener('click',()=>{ const v = qs('#priceMax').value; state.priceMax = v?Number(v):null; state.sort = qs('#sortSel').value; renderGrids(); })
+    qs('#clearFilters').addEventListener('click',()=>{ state.priceMax=null; qs('#priceMax').value=''; state.sort='featured'; qs('#sortSel').value='featured'; state.q=''; qs('#q').value=''; state.filterCat='all'; renderGrids(); })
+    qs('#sortSel').addEventListener('change',()=>{ state.sort = qs('#sortSel').value; renderGrids(); })
+
+    document.getElementById('openCart').addEventListener('click', openCart);
+    document.getElementById('closeCart').addEventListener('click', closeCart);
+    document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+      alert('Checkout not implemented in demo. Integrate your payment provider here.');
+    });
+
+    document.getElementById('openLogin').addEventListener('click', ()=>alert('Login modal not implemented in demo.'));
+    document.getElementById('openLogin2').addEventListener('click', ()=>alert('Login modal not implemented in demo.'));
+    document.getElementById('openOrders').addEventListener('click', ()=>alert('Orders page not implemented in demo.'));
+
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('browseDeals').addEventListener('click', ()=>window.scrollTo({top:document.getElementById('deals').offsetTop-10,behavior:'smooth'}));
+    document.getElementById('browseNew').addEventListener('click', ()=>window.scrollTo({top:document.getElementById('all').offsetTop-10,behavior:'smooth'}));
+
+    // ===== Init =====
+    document.getElementById('year').textContent = new Date().getFullYear();
+    updateCartIcon();
+    renderGrids();
+  </script>
+</body>
+</html>
+    
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - MyStore</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f8f8;
+    }
+    header {
+      background: #232f3e;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2 { margin-bottom: 1rem; }
+    .cart-summary { margin-bottom: 2rem; }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+    form label { display: block; margin-top: 1rem; }
+    form input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      margin-top: 1.5rem;
+      display: inline-block;
+      background: #ff9900;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn:hover { background: #e68a00; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MyStore Checkout</h1>
+  </header>
+  <main>
+    <section class="cart-summary">
+      <h2>Your Order</h2>
+      <div id="cartItems"></div>
+      <p><strong>Total: $<span id="cartTotal">0.00</span></strong></p>
+    </section>
+
+    <section class="checkout-form">
+      <h2>Shipping & Payment</h2>
+      <form id="checkoutForm">
+        <label>
+          Full Name
+          <input type="text" name="name" required>
+        </label>
+        <label>
+          Address
+          <input type="text" name="address" required>
+        </label>
+        <label>
+          City
+          <input type="text" name="city" required>
+        </label>
+        <label>
+          Card Number
+          <input type="text" name="card" required maxlength="16">
+        </label>
+        <button class="btn" type="submit">Place Order</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Load cart from localStorage
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartItemsDiv = document.getElementById("cartItems");
+    const cartTotalSpan = document.getElementById("cartTotal");
+
+    let total = 0;
+    cart.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <span>${item.name} (x${item.quantity})</span>
+        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+      `;
+      cartItemsDiv.appendChild(div);
+      total += item.price * item.quantity;
+    });
+    cartTotalSpan.textContent = total.toFixed(2);
+
+    // Handle order placement
+    document.getElementById("checkoutForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      alert("✅ Order placed successfully!");
+      localStorage.removeItem("cart");
+      window.location.href = "index.html"; // redirect back to home
+    });
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - MyStore</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f8f8f8; }
+    header { background:#232f3e; color:white; padding:1rem; text-align:center; }
+    main { max-width:900px; margin:2rem auto; background:white; padding:2rem;
+           border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    h2 { margin-bottom:1rem; }
+    .cart-item { display:flex; justify-content:space-between; margin-bottom:.75rem;
+                 border-bottom:1px solid #ddd; padding-bottom:.5rem;}
+    form label { display:block; margin-top:1rem; }
+    form input { width:100%; padding:.5rem; margin-top:.25rem; border:1px solid #ccc;
+                 border-radius:4px;}
+    .btn { margin-top:1.5rem; background:#ff9900; color:#fff; border:none;
+           padding:.75rem 1.25rem; border-radius:4px; cursor:pointer; font-size:1rem;}
+    .btn:hover { background:#e68a00; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MyStore Checkout</h1>
+  </header>
+  <main>
+    <section>
+      <h2>Your Order</h2>
+      <div id="cartItems"></div>
+      <p><strong>Total: $<span id="cartTotal">0.00</span></strong></p>
+    </section>
+
+    <section>
+      <h2>Shipping & Payment</h2>
+      <form id="checkoutForm">
+        <label>Full Name <input type="text" name="name" required></label>
+        <label>Address <input type="text" name="address" required></label>
+        <label>City <input type="text" name="city" required></label>
+        <label>Card Number <input type="text" name="card" required maxlength="16"></label>
+        <button class="btn" type="submit">Place Order</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Load cart
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartItemsDiv = document.getElementById("cartItems");
+    const cartTotalSpan = document.getElementById("cartTotal");
+    let total = 0;
+
+    cart.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `<span>${item.name} (x${item.quantity})</span>
+                       <span>$${(item.price * item.quantity).toFixed(2)}</span>`;
+      cartItemsDiv.appendChild(div);
+      total += item.price * item.quantity;
+    });
+    cartTotalSpan.textContent = total.toFixed(2);
+
+    // Handle checkout
+    document.getElementById("checkoutForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const formData = new FormData(this);
+      const order = {
+        id: Date.now(),
+        name: formData.get("name"),
+        address: formData.get("address"),
+        city: formData.get("city"),
+        items: cart,
+        total: total.toFixed(2),
+        date: new Date().toLocaleString()
+      };
+
+      // Save to orders in localStorage
+      const orders = JSON.parse(localStorage.getItem("orders")) || [];
+      orders.push(order);
+      localStorage.setItem("orders", JSON.stringify(orders));
+
+      // Clear cart
+      localStorage.removeItem("cart");
+
+      alert("✅ Order placed successfully!");
+      window.location.href = "orders.html"; // Go to Orders page
+    });
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - MyStore</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f8f8f8; }
+    header { background:#232f3e; color:white; padding:1rem; text-align:center; }
+    main { max-width:900px; margin:2rem auto; background:white; padding:2rem;
+           border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    .order { border:1px solid #ddd; margin-bottom:1.5rem; padding:1rem; border-radius:6px;}
+    .order h3 { margin:0 0 .5rem; }
+    .item { display:flex; justify-content:space-between; padding:.25rem 0; }
+    .total { margin-top:.5rem; font-weight:bold; }
+    a.btn { display:inline-block; background:#ff9900; color:#fff; text-decoration:none;
+            padding:.5rem 1rem; border-radius:4px; margin-top:1rem;}
+    a.btn:hover { background:#e68a00; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Orders</h1>
+  </header>
+  <main>
+    <div id="ordersList"></div>
+    <a href="index.html" class="btn">Continue Shopping</a>
+  </main>
+
+  <script>
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    const ordersDiv = document.getElementById("ordersList");
+
+    if (orders.length === 0) {
+      ordersDiv.innerHTML = "<p>You have no orders yet.</p>";
+    } else {
+      orders.forEach(order => {
+        const div = document.createElement("div");
+        div.className = "order";
+        div.innerHTML = `
+          <h3>Order #${order.id}</h3>
+          <p><strong>Name:</strong> ${order.name}</p>
+          <p><strong>Address:</strong> ${order.address}, ${order.city}</p>
+          <p><strong>Date:</strong> ${order.date}</p>
+          <div>
+            ${order.items.map(i => `<div class="item">
+              <span>${i.name} (x${i.quantity})</span>
+              <span>$${(i.price * i.quantity).toFixed(2)}</span>
+            </div>`).join("")}
+          </div>
+          <p class="total">Total: $${order.total}</p>
+        `;
+        ordersDiv.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - MyStore</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f8f8f8; }
+    header { background:#232f3e; color:white; padding:1rem; text-align:center; }
+    main { max-width:900px; margin:2rem auto; background:white; padding:2rem;
+           border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    .order { border:1px solid #ddd; margin-bottom:1.5rem; padding:1rem; border-radius:6px;}
+    .order h3 { margin:0 0 .5rem; }
+    .item { display:flex; justify-content:space-between; padding:.25rem 0; }
+    .total { margin-top:.5rem; font-weight:bold; }
+    a.btn { display:inline-block; background:#ff9900; color:#fff; text-decoration:none;
+            padding:.5rem 1rem; border-radius:4px; margin-top:1rem;}
+    a.btn:hover { background:#e68a00; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Orders</h1>
+  </header>
+  <main>
+    <div id="ordersList"></div>
+    <a href="index.html" class="btn">Continue Shopping</a>
+  </main>
+
+  <script>
+    // Load orders from localStorage
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    const ordersDiv = document.getElementById("ordersList");
+
+    if (orders.length === 0) {
+      ordersDiv.innerHTML = "<p>You have no orders yet.</p>";
+    } else {
+      orders.forEach(order => {
+        const div = document.createElement("div");
+        div.className = "order";
+        div.innerHTML = `
+          <h3>Order #${order.id}</h3>
+          <p><strong>Name:</strong> ${order.name}</p>
+          <p><strong>Address:</strong> ${order.address}, ${order.city}</p>
+          <p><strong>Date:</strong> ${order.date}</p>
+          <div>
+            ${order.items.map(i => `<div class="item">
+              <span>${i.name} (x${i.quantity})</span>
+              <span>$${(i.price * i.quantity).toFixed(2)}</span>
+            </div>`).join("")}
+          </div>
+          <p class="total">Total: $${order.total}</p>
+        `;
+        ordersDiv.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
+// inside checkout.js or script
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+orders.push(order);
+localStorage.setItem("orders", JSON.stringify(orders));
+window.location.href = "orders.html";
+<!-- 🔑 Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeLogin()">&times;</span>
+    <h2>Login</h2>
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" id="loginEmail" required>
+      <label>Password</label>
+      <input type="password" id="loginPassword" required>
+      <button type="submit" class="btn">Login</button>
+    </form>
+  </div>
+</div>
+/* Login Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+}
+.modal-content {
+  background: #fff;
+  margin: 10% auto;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+.modal-content h2 { margin-top: 0; }
+.close {
+  position: absolute;
+  right: 1rem; top: 1rem;
+  font-size: 1.5rem; cursor: pointer;
+}
+.modal-content input {
+  width: 100%; padding: 0.5rem; margin: 0.5rem 0;
+  border: 1px solid #ccc; border-radius: 4px;
+}
+.modal-content .btn {
+  width: 100%; padding: 0.75rem; background: #ff9900; color: white;
+  border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;
+}
+.modal-content .btn:hover { background: #e68a00; }
+// Open & Close Login
+function openLogin() {
+  document.getElementById("loginModal").style.display = "block";
+}
+function closeLogin() {
+  document.getElementById("loginModal").style.display = "none";
+}
+
+// Demo login system
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPassword").value;
+
+  // simple auth (for demo only)
+  if (email && pass) {
+    localStorage.setItem("user", JSON.stringify({ email }));
+    alert("✅ Logged in as " + email);
+    closeLogin();
+    updateNavbar();
+  } else {
+    alert("❌ Invalid credentials");
+  }
+});
+
+// Show user info in navbar
+function updateNavbar() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const loginBtn = document.getElementById("loginBtn");
+  if (user) {
+    loginBtn.innerHTML = `👤 ${user.email} (Logout)`;
+    loginBtn.onclick = logout;
+  } else {
+    loginBtn.innerHTML = "Login";
+    loginBtn.onclick = openLogin;
+  }
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  alert("Logged out");
+  updateNavbar();
+}
+
+// Run on load
+updateNavbar();
+<button id="loginBtn" onclick="openLogin()">Login</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyStore - Demo with Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f8f8f8; }
+    header { background:#232f3e; color:white; padding:1rem;
+             display:flex; justify-content:space-between; align-items:center; }
+    header h1 { margin:0; }
+    header button {
+      background:#ff9900; border:none; padding:0.5rem 1rem;
+      border-radius:4px; cursor:pointer; font-size:1rem; color:white;
+    }
+    header button:hover { background:#e68a00; }
+    main { padding:2rem; }
+    .product { background:white; border:1px solid #ddd;
+               padding:1rem; margin-bottom:1rem; border-radius:6px; }
+
+    /* 🔑 Login Modal */
+    .modal {
+      display: none; position: fixed; z-index: 999;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background: #fff; margin: 10% auto; padding: 2rem;
+      border-radius: 8px; width: 90%; max-width: 400px;
+      position: relative;
+    }
+    .modal-content h2 { margin-top: 0; }
+    .close {
+      position: absolute; right: 1rem; top: 1rem;
+      font-size: 1.5rem; cursor: pointer;
+    }
+    .modal-content input {
+      width: 100%; padding: 0.5rem; margin: 0.5rem 0;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+    .modal-content .btn {
+      width: 100%; padding: 0.75rem; background: #ff9900; color: white;
+      border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;
+    }
+    .modal-content .btn:hover { background: #e68a00; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MyStore</h1>
+    <button id="loginBtn" onclick="openLogin()">Login</button>
+  </header>
+
+  <main>
+    <h2>Products</h2>
+    <div class="product">Sample Product 1 - $20</div>
+    <div class="product">Sample Product 2 - $35</div>
+    <div class="product">Sample Product 3 - $50</div>
+  </main>
+
+  <!-- 🔑 Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeLogin()">&times;</span>
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label>Email</label>
+        <input type="email" id="loginEmail" required>
+        <label>Password</label>
+        <input type="password" id="loginPassword" required>
+        <button type="submit" class="btn">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Open & Close Login
+    function openLogin() {
+      document.getElementById("loginModal").style.display = "block";
+    }
+    function closeLogin() {
+      document.getElementById("loginModal").style.display = "none";
+    }
+
+    // Demo login system
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const pass = document.getElementById("loginPassword").value;
+
+      if (email && pass) {
+        localStorage.setItem("user", JSON.stringify({ email }));
+        alert("✅ Logged in as " + email);
+        closeLogin();
+        updateNavbar();
+      } else {
+        alert("❌ Invalid credentials");
+      }
+    });
+
+    // Update navbar
+    function updateNavbar() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const loginBtn = document.getElementById("loginBtn");
+      if (user) {
+        loginBtn.innerHTML = `👤 ${user.email} (Logout)`;
+        loginBtn.onclick = logout;
+      } else {
+        loginBtn.innerHTML = "Login";
+        loginBtn.onclick = openLogin;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("user");
+      alert("Logged out");
+      updateNavbar();
+    }
+
+    // Run on load
+    updateNavbar();
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - MyStore</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; background:#f8f8f8; }
+    header { background:#232f3e; color:white; padding:1rem; text-align:center; }
+    main { max-width:600px; margin:2rem auto; background:white; padding:2rem;
+           border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    label { display:block; margin-top:1rem; }
+    input, select { width:100%; padding:0.5rem; margin-top:0.3rem; }
+    button { background:#ff9900; border:none; padding:0.75rem 1rem;
+             border-radius:4px; color:white; font-size:1rem; margin-top:1rem; cursor:pointer; }
+    button:hover { background:#e68a00; }
+  </style>
+</head>
+<body>
+  <header><h1>Checkout</h1></header>
+  <main>
+    <form id="checkoutForm">
+      <label>Name</label>
+      <input type="text" id="name" required>
+      <label>Email</label>
+      <input type="email" id="email" required>
+      <label>Amount (PKR)</label>
+      <input type="number" id="amount" required>
+
+      <label>Payment Method</label>
+      <select id="paymentMethod">
+        <option value="jazzcash">JazzCash</option>
+      </select>
+
+      <button type="submit">Pay Now</button>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById("checkoutForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        amount: document.getElementById("amount").value,
+        method: document.getElementById("paymentMethod").value
+      };
+
+      // Send order to your backend API
+      const res = await fetch("process_payment.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      if (result.redirectUrl) {
+        // Redirect to JazzCash secure payment page
+        window.location.href = result.redirectUrl;
+      } else {
+        alert("Error: " + result.message);
+      }
+    });
+  </script>
+</body>
+</html>
+<?php
+header("Content-Type: application/json");
+
+// 🔑 Replace with your JazzCash credentials
+$MERCHANT_ID   = "YourMerchantID";
+$PASSWORD      = "YourPassword";
+$RETURN_URL    = "https://yourdomain.com/payment_success.php";
+$POST_URL      = "https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Payment/DoTransaction"; // Sandbox
+
+// Read frontend JSON
+$data = json_decode(file_get_contents("php://input"), true);
+$amount = $data["amount"];
+$txnRef = "T" . time();
+
+// Generate secure hash
+$dateTime = date("YmdHis");
+$pp_TxnCurrency = "PKR";
+$pp_TxnDateTime = $dateTime;
+$pp_TxnExpiryDateTime = date("YmdHis", strtotime("+1 hours"));
+$pp_TxnRefNo = $txnRef;
+
+$sortedString = "$MERCHANT_ID&$PASSWORD&$pp_TxnRefNo&$amount&$pp_TxnCurrency";
+$pp_SecureHash = hash_hmac('sha256', $sortedString, $PASSWORD);
+
+// Build request
+$request = [
+  "pp_Version" => "1.1",
+  "pp_TxnType" => "MWALLET",
+  "pp_MerchantID" => $MERCHANT_ID,
+  "pp_TxnRefNo" => $pp_TxnRefNo,
+  "pp_Amount" => $amount*100, // PKR to Paisa
+  "pp_TxnCurrency" => $pp_TxnCurrency,
+  "pp_TxnDateTime" => $pp_TxnDateTime,
+  "pp_TxnExpiryDateTime" => $pp_TxnExpiryDateTime,
+  "pp_ReturnURL" => $RETURN_URL,
+  "pp_SecureHash" => $pp_SecureHash,
+  "pp_BillReference" => "billRef",
+  "pp_Description" => "Test Payment"
+];
+
+// Send to JazzCash
+$ch = curl_init($POST_URL);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request));
+$response = curl_exec($ch);
+curl_close($ch);
+
+echo json_encode([
+  "redirectUrl" => $POST_URL . "?" . http_build_query($request)
+]);
+3️⃣ payment_success.php
+php
+Copy
+Edit
+<?php
+echo "<h1>✅ Payment Success</h1>";
+echo "<pre>";
+print_r($_REQUEST);
+echo "</pre>";
+<!-- Login Button -->
+<button id="loginBtn">Login</button>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Enter Username"><br><br>
+    <input type="password" id="password" placeholder="Enter Password"><br><br>
+    <button id="submitLogin">Login</button>
+  </div>
+</div>
+
+<style>
+  .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); }
+  .modal-content { background:#fff; color:#000; margin:15% auto; padding:20px; border-radius:10px; width:300px; text-align:center; }
+  .close { float:right; font-size:20px; cursor:pointer; }
+</style>
+
+<script>
+  const loginBtn = document.getElementById("loginBtn");
+  const modal = document.getElementById("loginModal");
+  const closeBtn = document.querySelector(".close");
+  const submitLogin = document.getElementById("submitLogin");
+
+  // Open modal
+  loginBtn.onclick = () => { modal.style.display = "block"; };
+
+  // Close modal
+  closeBtn.onclick = () => { modal.style.display = "none"; };
+
+  // Login action
+  submitLogin.onclick = () => {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+
+    if(user && pass){
+      localStorage.setItem("loggedInUser", user);
+      alert("Login successful! Welcome " + user);
+      modal.style.display = "none";
+      loginBtn.textContent = "Logged in as " + user;
+    } else {
+      alert("Please enter username & password");
+    }
+  };
+
+  // If already logged in
+  window.onload = () => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if(loggedInUser){
+      loginBtn.textContent = "Logged in as " + loggedInUser;
+    }
+  };
+</script>
